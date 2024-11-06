@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class HelloService {
   getHello(): string {
-    return 'Hello from NestJS!';
+    return 'Hello from NestJS!'
   }
   getHelloTwo(): string {
-    return 'Hello from NestJS 2!';
+    return 'Hello from NestJS 2!'
   }
 }
