@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';  // Используем useNavigate вместо useHistory
+import {Link, useNavigate} from 'react-router-dom';  // Используем useNavigate вместо useHistory
 import { register } from '../api/auth';
 
 const Register: React.FC = () => {
@@ -47,6 +47,10 @@ const Register: React.FC = () => {
             />
           </div>
           <button type="submit" className="btn btn-primary w-100">Register</button>
+          <div className="text-center mt-3">
+            <span>Do you have account? </span>
+            <Link to="/login">Login</Link>
+          </div>
         </form>
         {error && <div className="alert alert-danger mt-3">{error}</div>}
       </div>
