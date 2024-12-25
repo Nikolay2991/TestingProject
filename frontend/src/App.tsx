@@ -1,44 +1,42 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';  // Используем Routes и Navigate
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Register from './components/Register';
 import Login from './components/Login';
+import Dashboard from "./components/Dashbord";
 
-const Dashboard: React.FC = () => {
-  const navigate = useNavigate();
+// Компонент для защиты маршрутов
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const navigate = useNavigate();
+    const token = localStorage.getItem('token');
 
-  const handleLogout = () => {
-    // Удаляем токен из localStorage
-    localStorage.removeItem('token');
+    useEffect(() => {
+        if (!token) {
+            navigate('/login'); // Если токен отсутствует, перенаправляем на страницу входа
+        }
+    }, [token, navigate]);
 
-    // Перенаправляем на страницу входа
-    navigate('/login');
-  };
-
-  return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-        <div className="card p-4" style={{ width: '100%', maxWidth: '400px' }}>
-          <h2 className="text-center mb-4">Dashboard</h2>
-          <button onClick={handleLogout} className="btn btn-danger w-100">
-            Logout
-          </button>
-        </div>
-      </div>
-  );
+    return <>{token ? children : null}</>;
 };
 
+// Основное приложение
 const App: React.FC = () => {
-  return (
-    <Router>
-      <div>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/" element={<Navigate to="/login" />} />  {/* Используем Navigate для редиректа */}
-        </Routes>
-      </div>
-    </Router>
-  );
+    return (
+        <Router>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route path="/" element={<Navigate to="/login" />} />
+            </Routes>
+        </Router>
+    );
 };
 
 export default App;

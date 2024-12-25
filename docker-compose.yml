@@ -1,41 +1,40 @@
 version: '3'
 services:
-  backend-api:
+  backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/app            # Монтируем локальную папку в контейнер
-      - /app/node_modules          # Исключаем node_modules контейнера, чтобы избежать конфликтов
+      - ./backend:/app:delegated       # Монтируем локальную папку в контейнер
+      - /app/node_modules             # Исключаем node_modules
     ports:
-      - "4000:4000"                # Пробрасываем порт для backend
+      - "4000:4000"                   # Пробрасываем порт для backend
     environment:
-      - NODE_ENV=development       # Переменная окружения для dev
+      - NODE_ENV=development          # Переменная окружения для dev
       - MONGO_URI=mongodb://mongo:27017/mydb  # Строка подключения к MongoDB
-    command: npm run start:dev      # Команда для запуска сервера в режиме разработки
+    command: npm run start:dev      # Используем команду для разработки (с hot-reload)
     depends_on:
-      - mongo                       # Обеспечиваем, чтобы MongoDB запускалась раньше backend
+      - mongo                         # Обеспечиваем запуск MongoDB перед backend
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     volumes:
-      - ./frontend:/app            # Монтируем локальную папку для frontend
-      - /app/node_modules
+      - ./frontend:/app:delegated     # Монтируем локальную папку для frontend
     ports:
-      - "3000:3000"                # Пробрасываем порт для frontend
+      - "3000:3000"                   # Пробрасываем порт для frontend
     environment:
       - NODE_ENV=development
-    command: npm start             # Команда для запуска frontend в dev
+    command: npm start                # Запускаем frontend dev-сервер
 
   mongo:
-    image: mongo:latest            # Используем официальный образ MongoDB
+    image: mongo:latest               # Используем официальный образ MongoDB
     container_name: mongo
     ports:
-      - "27018:27017"              # Пробрасываем порт для MongoDB
+      - "27017:27017"                 # Пробрасываем порт для MongoDB
     volumes:
-      - mongo-data:/data/db        # Монтируем volume для хранения данных
+      - mongo-data:/data/db           # Монтируем volume для данных
 
 volumes:
-  mongo-data:                      # Используем named volume для данных MongoDB
+  mongo-data:                         # Named volume для данных MongoDB
